@@ -138,7 +138,7 @@ export const render = (raw, renderers = {}, arg3 = {}, arg4 = {}) => {
     deprecated('passing renderers separetly is deprecated'); // eslint-disable-line
   }
   const blocks = byDepth(raw.blocks);
-  if (!blocks || blocks[0].text.length === 0) {
+  if (!blocks) {
     return null;
   }
   return renderBlocks(blocks, inlineRendrers, blockRenderers, entityRenderers, raw.entityMap);
