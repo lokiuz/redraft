@@ -78,6 +78,43 @@ const raw2 = {
   }],
 };
 
+const raw3 = {
+  entityMap: {},
+  blocks: [{
+    key: 'e047l',
+    text: 'Paragraph one',
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [],
+    entityRanges: [],
+    data: {},
+  }, {
+    key: '520kr',
+    text: 'A quote',
+    type: 'blockquote',
+    depth: 0,
+    inlineStyleRanges: [],
+    entityRanges: [],
+    data: {},
+  }, {
+    key: 'c3taj',
+    text: 'Spanning multiple lines',
+    type: 'blockquote',
+    depth: 0,
+    inlineStyleRanges: [],
+    entityRanges: [],
+    data: {},
+  }, {
+    key: '6aaeh',
+    text: 'A second paragraph.',
+    type: 'unstyled',
+    depth: 0,
+    inlineStyleRanges: [],
+    entityRanges: [],
+    data: {},
+  }],
+};
+
 const rawWithEmptyLine = {
   entityMap: {},
   blocks: [{
@@ -336,6 +373,19 @@ const renderers = {
   entities,
 };
 
+const blocksWithKeys = {
+  unstyled: (children, depth, key) => `<p key="${key}">${joinRecursively(children)}</p>`,
+  blockquote: (children, depth, key) => `<blockquote key="${key}">${joinRecursively(children)}</blockquote>`,
+  'ordered-list-item': (children, depth, key) => `<ol key="${key}">${makeList(children)}</ol>`,
+  'unordered-list-item': (children, depth, key) => `<ul key="${key}">${makeList(children)}</ul>`,
+};
+
+const renderersWithKeys = {
+  inline,
+  blocks: blocksWithKeys,
+  entities,
+};
+
 describe('renderRaw', () => {
   it('should render correctly', () => {
     const rendered = redraft(raw, renderers);
@@ -381,6 +431,11 @@ describe('renderRaw', () => {
     const rendered = redraft(rawStyleWithEntities, renderers);
     const joined = joinRecursively(rendered);
     joined.should.equal('<p><strong>This </strong><div style="color: #ee6a56" ><strong>is a </strong></div><div style="color: #ee6a56" ><strong>Greeting</strong></div><div style="color: #ee6a56" ><strong> redraft</strong></div><strong>bug.</strong></p>'); // eslint-disable-line max-len
+  });
+  it('should render blocks with the block keys', () => {
+    const rendered = redraft(raw3, renderersWithKeys);
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<p key="e047l">Paragraph one</p><blockquote key="c3taj">A quoteSpanning multiple lines</blockquote><p key="6aaeh">A second paragraph.</p>'); // eslint-disable-line max-len
   });
   it('should render null for empty raw blocks array', () => {
     const rendered = redraft(emptyRaw, renderers);
