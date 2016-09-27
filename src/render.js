@@ -83,7 +83,7 @@ const byDepth = (blocks) => {
 /**
  * Renders blocks grouped by type using provided blockStyleRenderers
  */
-const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {},
+const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
                       entityRenderers = {}, entityMap = {}) => {
   // initialize
   const rendered = [];
@@ -95,7 +95,7 @@ const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {},
 
   blocks.forEach((block) => {
     const node = Parser.parse(block);
-    const renderedNode = renderNode(node, inlineRendrers, entityRenderers, entityMap);
+    const renderedNode = renderNode(node, inlineRenderers, entityRenderers, entityMap);
     // if type of the block has changed render the block and clear group
     if (prevType && prevType !== block.type) {
       if (blockRenderers[prevType]) {
@@ -107,7 +107,7 @@ const renderBlocks = (blocks, inlineRendrers = {}, blockRenderers = {},
     }
     // handle children
     if (block.children) {
-      const children = renderBlocks(block.children, inlineRendrers,
+      const children = renderBlocks(block.children, inlineRenderers,
       blockRenderers, entityRenderers, entityMap);
       renderedNode.push(children);
     }
@@ -140,17 +140,17 @@ export const render = (raw, renderers = {}, arg3 = {}, arg4 = {}) => {
   if (!raw.blocks.length) {
     return null;
   }
-  let { inline: inlineRendrers, blocks: blockRenderers, entities: entityRenderers } = renderers;
+  let { inline: inlineRenderers, blocks: blockRenderers, entities: entityRenderers } = renderers;
   // Fallback to deprecated api
-  if (!inlineRendrers && !blockRenderers && !entityRenderers) {
-    inlineRendrers = renderers;
+  if (!inlineRenderers && !blockRenderers && !entityRenderers) {
+    inlineRenderers = renderers;
     blockRenderers = arg3;
     entityRenderers = arg4;
     // Logs a deprecation warning if not in production
     deprecated('passing renderers separetly is deprecated'); // eslint-disable-line
   }
   const blocks = byDepth(raw.blocks);
-  return renderBlocks(blocks, inlineRendrers, blockRenderers, entityRenderers, raw.entityMap);
+  return renderBlocks(blocks, inlineRenderers, blockRenderers, entityRenderers, raw.entityMap);
 };
 
 export const renderRaw = (...args) => {
