@@ -18,7 +18,7 @@ const pushString = (string, array, index) => {
 /**
  * Recursively renders a node with nested nodes with given callbacks
  */
-export const renderNode = (node, styleRendrers, entityRenderers, entityMap) => {
+export const renderNode = (node, styleRenderers, entityRenderers, entityMap) => {
   let children = [];
   let index = 0;
   node.content.forEach((part) => {
@@ -26,12 +26,12 @@ export const renderNode = (node, styleRendrers, entityRenderers, entityMap) => {
       children = pushString(part, children, index);
     } else {
       index += 1;
-      children[index] = renderNode(part, styleRendrers, entityRenderers, entityMap);
+      children[index] = renderNode(part, styleRenderers, entityRenderers, entityMap);
       index += 1;
     }
   });
-  if (node.style && styleRendrers[node.style]) {
-    return styleRendrers[node.style](children);
+  if (node.style && styleRenderers[node.style]) {
+    return styleRenderers[node.style](children);
   }
   if (node.entity !== null) {
     const entity = entityMap[node.entity];
