@@ -374,10 +374,10 @@ const renderers = {
 };
 
 const blocksWithKeys = {
-  unstyled: (children, depth, key) => `<p key="${key}">${joinRecursively(children)}</p>`,
-  blockquote: (children, depth, key) => `<blockquote key="${key}">${joinRecursively(children)}</blockquote>`,
-  'ordered-list-item': (children, depth, key) => `<ol key="${key}">${makeList(children)}</ol>`,
-  'unordered-list-item': (children, depth, key) => `<ul key="${key}">${makeList(children)}</ul>`,
+  unstyled: (children, depth, keys) => `<p key="${keys.join(',')}">${joinRecursively(children)}</p>`,
+  blockquote: (children, depth, keys) => `<blockquote key="${keys.join(',')}">${joinRecursively(children)}</blockquote>`,
+  'ordered-list-item': (children, depth, keys) => `<ol key="${keys.join(',')}">${makeList(children)}</ol>`,
+  'unordered-list-item': (children, depth, keys) => `<ul key="${keys.join(',')}">${makeList(children)}</ul>`,
 };
 
 const renderersWithKeys = {
@@ -435,7 +435,7 @@ describe('renderRaw', () => {
   it('should render blocks with the block keys', () => {
     const rendered = redraft(raw3, renderersWithKeys);
     const joined = joinRecursively(rendered);
-    joined.should.equal('<p key="e047l">Paragraph one</p><blockquote key="c3taj">A quoteSpanning multiple lines</blockquote><p key="6aaeh">A second paragraph.</p>'); // eslint-disable-line max-len
+    joined.should.equal('<p key="e047l">Paragraph one</p><blockquote key="520kr,c3taj">A quoteSpanning multiple lines</blockquote><p key="6aaeh">A second paragraph.</p>'); // eslint-disable-line max-len
   });
   it('should render null for empty raw blocks array', () => {
     const rendered = redraft(emptyRaw, renderers);
