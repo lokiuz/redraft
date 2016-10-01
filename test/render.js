@@ -336,6 +336,36 @@ const rawStyleWithEntities = {
   ],
 };
 
+const rawWithMetadata = {
+  entityMap: {},
+  blocks: [
+    {
+      key: '1',
+      type: 'atomic',
+      data: {
+        type: 'resizable',
+        width: '300px',
+      },
+      text: 'A',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: '2',
+      type: 'atomic',
+      data: {
+        type: 'image',
+        src: 'img.png',
+        alt: 'C',
+      },
+      text: 'B',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    }],
+};
+
 
 // to render to a plain string we need to be sure all the arrays are joined after render
 const joinRecursively = (array) => array.map((child) => {
@@ -360,6 +390,20 @@ const blocks = {
   blockquote: (children) => `<blockquote>${joinRecursively(children)}</blockquote>`,
   'ordered-list-item': (children) => `<ol>${makeList(children)}</ol>`,
   'unordered-list-item': (children) => `<ul>${makeList(children)}</ul>`,
+};
+
+const atomicBlocks = {
+  resizable: (children, { width }, key) => `<div key="${key}" style="width: ${width};" >${joinRecursively(children)}</div>`,
+  image: (children, { src, alt }, key) => `<img key="${key}" src="${src}" alt="${alt}" />`,
+};
+
+const dataBlocks = {
+  atomic: (children, _, { keys, data }) => {
+    const maped = children.map(
+      (child, i) => atomicBlocks[data[i].type](child, data[i], keys[i])
+    );
+    return joinRecursively(maped);
+  },
 };
 
 const entities = {
@@ -440,19 +484,28 @@ describe('renderRaw', () => {
     const joined = joinRecursively(rendered);
     joined.should.equal('<p key="e047l">Paragraph one</p><blockquote key="520kr,c3taj">A quoteSpanning multiple lines</blockquote><p key="6aaeh">A second paragraph.</p>'); // eslint-disable-line max-len
   });
-  it('should render null for empty raw blocks array', () => {
+  it('should render atomic blocks with block metadata', () => {
+    const rendered = redraft(rawWithMetadata, {
+      inline,
+      blocks: dataBlocks,
+      entities,
+    });
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<div key="1" style="width: 300px;" >A</div><img key="2" src="img.png" alt="C" />'); // eslint-disable-line max-len
+  });
+  it('should return null for empty raw blocks array', () => {
     const rendered = redraft(emptyRaw, renderers);
     should.equal(rendered, null);
   });
-  it('should render null for an invalid input 1/2', () => {
+  it('should return null for an invalid input 1/2', () => {
     const rendered = redraft(invalidRaw, renderers);
     should.equal(rendered, null);
   });
-  it('should render null for an invalid input 2/2', () => {
+  it('should return null for an invalid input 2/2', () => {
     const rendered = redraft([], renderers);
     should.equal(rendered, null);
   });
-  it('should render null for no input', () => {
+  it('should return null for no input', () => {
     const rendered = redraft();
     should.equal(rendered, null);
   });
