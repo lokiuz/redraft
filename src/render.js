@@ -91,6 +91,7 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
   let prevType = null;
   let prevDepth = 0;
   let prevKeys = [];
+  let prevData = [];
   const Parser = new RawParser();
 
   blocks.forEach((block) => {
@@ -99,8 +100,12 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
     // if type of the block has changed render the block and clear group
     if (prevType && prevType !== block.type) {
       if (blockRenderers[prevType]) {
-        rendered.push(blockRenderers[prevType](group, prevDepth, prevKeys));
+        rendered.push(blockRenderers[prevType](group, prevDepth, {
+          keys: prevKeys,
+          data: prevData,
+        }));
         prevKeys = [];
+        prevData = [];
       } else {
         rendered.push(group);
       }
@@ -119,10 +124,14 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
     prevType = block.type;
     prevDepth = block.depth;
     prevKeys.push(block.key);
+    prevData.push(block.data);
   });
   // render last group
   if (blockRenderers[prevType]) {
-    rendered.push(blockRenderers[prevType](group, prevDepth, prevKeys));
+    rendered.push(blockRenderers[prevType](group, prevDepth, {
+      keys: prevKeys,
+      data: prevData,
+    }));
   } else {
     rendered.push(group);
   }
