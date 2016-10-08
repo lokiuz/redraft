@@ -137,11 +137,11 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
   const Parser = new RawParser();
 
   blocks.forEach((block) => {
-    const node = Parser.parse(block);
-    const renderedNode = renderNode(node, inlineRenderers, entityRenderers, entityMap, options);
     if (checkCleanup(block, prevType, options)) {
       return;
     }
+    const node = Parser.parse(block);
+    const renderedNode = renderNode(node, inlineRenderers, entityRenderers, entityMap, options);
     // if type of the block has changed render the block and clear group
     if (prevType && prevType !== block.type) {
       if (blockRenderers[prevType]) {
