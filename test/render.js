@@ -366,6 +366,53 @@ const rawWithMetadata = {
     }],
 };
 
+const rawWithEmptyBlocks = {
+  entityMap: {},
+  blocks: [
+    {
+      key: '1',
+      type: 'atomic',
+      data: {
+        type: 'resizable',
+        width: '300px',
+      },
+      text: 'A',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: 'u1',
+      type: 'unstyled',
+      text: '',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: '2',
+      type: 'atomic',
+      data: {
+        type: 'image',
+        src: 'img.png',
+        alt: 'C',
+      },
+      text: 'B',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: 'u2',
+      type: 'unstyled',
+      text: ' ',
+      depth: 0,
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+  ],
+};
+
 
 // to render to a plain string we need to be sure all the arrays are joined after render
 const joinRecursively = (array) => array.map((child) => {
@@ -398,6 +445,7 @@ const atomicBlocks = {
 };
 
 const dataBlocks = {
+  unstyled: (children) => `<p>${joinRecursively(children)}</p>`,
   atomic: (children, _, { keys, data }) => {
     const maped = children.map(
       (child, i) => atomicBlocks[data[i].type](child, data[i], keys[i])
@@ -453,7 +501,13 @@ const renderersNoJoin = {
   entities: entitiesNoJoin,
 };
 
-describe('renderRaw', () => {
+const renderersWithData = {
+  inline,
+  blocks: dataBlocks,
+  entities,
+};
+
+describe('redraft', () => {
   it('should render correctly', () => {
     const rendered = redraft(raw, renderers);
     const joined = joinRecursively(rendered);
@@ -500,13 +554,28 @@ describe('renderRaw', () => {
     joined.should.equal('<p key="e047l">Paragraph one</p><blockquote key="520kr,c3taj">A quoteSpanning multiple lines</blockquote><p key="6aaeh">A second paragraph.</p>'); // eslint-disable-line max-len
   });
   it('should render atomic blocks with block metadata', () => {
-    const rendered = redraft(rawWithMetadata, {
-      inline,
-      blocks: dataBlocks,
-      entities,
+    const rendered = redraft(rawWithMetadata, renderersWithData);
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<div key="1" style="width: 300px;" >A</div><img key="2" src="img.png" alt="C" />'); // eslint-disable-line max-len
+  });
+  it('should render atomic blocks with cleanup enabled', () => {
+    const rendered = redraft(rawWithEmptyBlocks, renderersWithData);
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<div key="1" style="width: 300px;" >A</div><img key="2" src="img.png" alt="C" /><p> </p>'); // eslint-disable-line max-len
+  });
+  it('should cleanup blocks with only whitlespace with trim enabled', () => {
+    const rendered = redraft(rawWithEmptyBlocks, renderersWithData, {
+      cleanup: { types: ['unstyled'], after: ['atomic'], trim: true },
     });
     const joined = joinRecursively(rendered);
     joined.should.equal('<div key="1" style="width: 300px;" >A</div><img key="2" src="img.png" alt="C" />'); // eslint-disable-line max-len
+  });
+  it('should render empty blocks with cleanup disabled', () => {
+    const rendered = redraft(rawWithEmptyBlocks, renderersWithData, {
+      cleanup: false,
+    });
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<div key="1" style="width: 300px;" >A</div><p></p><img key="2" src="img.png" alt="C" /><p> </p>'); // eslint-disable-line max-len
   });
   it('should render correctly without join', () => {
     const rendered = redraft(raw, renderersNoJoin, { joinOutput: true });

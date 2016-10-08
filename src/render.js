@@ -3,6 +3,11 @@ import warn from './warn';
 
 const defaultOptions = {
   joinOutput: false,
+  cleanup: {
+    after: ['atomic'],
+    types: ['unstyled'],
+    trim: false,
+  },
 };
 
 /**
@@ -26,6 +31,29 @@ const checkJoin = (input, options) => {
     return input.join('');
   }
   return input;
+};
+
+/**
+ * Check if text is false with or without trim depending on cleanup settings
+ */
+const hasText = (text, { trim }) => !!(trim ? text.trim() : text);
+
+/**
+ * Checks if current block is empty and if it should be ommited according to passed settings
+ */
+const checkCleanup = (block, prevType, { cleanup }) => {
+  if (!cleanup || hasText(block.text, cleanup)) {
+    return false;
+  }
+  // Check if cleanup is enabled after prev type
+  if (cleanup.after !== 'all' && !cleanup.after.includes(prevType)) {
+    return false;
+  }
+  // Finaly if cleanup is enabled for current type
+  if (cleanup.types === 'all' || cleanup.types.includes(block.type)) {
+    return true;
+  }
+  return false;
 };
 
 /**
@@ -111,6 +139,9 @@ const renderBlocks = (blocks, inlineRenderers = {}, blockRenderers = {},
   blocks.forEach((block) => {
     const node = Parser.parse(block);
     const renderedNode = renderNode(node, inlineRenderers, entityRenderers, entityMap, options);
+    if (checkCleanup(block, prevType, options)) {
+      return;
+    }
     // if type of the block has changed render the block and clear group
     if (prevType && prevType !== block.type) {
       if (blockRenderers[prevType]) {
