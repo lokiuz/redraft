@@ -1,3 +1,4 @@
 {
-  "presets": ["es2015"]
+  "presets": ["latest"],
+  "plugins": ["array-includes"]
 }
