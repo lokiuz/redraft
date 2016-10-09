@@ -1,5 +1,6 @@
 import RawParser from './RawParser';
 import warn from './warn';
+import checkCleanup from './checkClenup';
 
 const defaultOptions = {
   joinOutput: false,
@@ -31,29 +32,6 @@ const checkJoin = (input, options) => {
     return input.join('');
   }
   return input;
-};
-
-/**
- * Check if text is false with or without trim depending on cleanup settings
- */
-const hasText = (text, { trim }) => !!(trim ? text.trim() : text);
-
-/**
- * Checks if current block is empty and if it should be ommited according to passed settings
- */
-const checkCleanup = (block, prevType, { cleanup }) => {
-  if (!cleanup || hasText(block.text, cleanup)) {
-    return false;
-  }
-  // Check if cleanup is enabled after prev type
-  if (cleanup.after !== 'all' && !cleanup.after.includes(prevType)) {
-    return false;
-  }
-  // Finaly if cleanup is enabled for current type
-  if (cleanup.types === 'all' || cleanup.types.includes(block.type)) {
-    return true;
-  }
-  return false;
 };
 
 /**
