@@ -29,7 +29,7 @@ const checkCleanup = (block, prevType, { cleanup }) => {
     return false;
   }
   // Check if cleanup is enabled after prev type
-  if (cleanup.after !== 'all' && !cleanup.after.includes(prevType)) {
+  if (cleanup.after && (cleanup.after !== 'all' && !cleanup.after.includes(prevType))) {
     return false;
   }
   // Handle the except array if passed
