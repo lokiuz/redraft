@@ -10,7 +10,7 @@ export const raw = {
   },
   blocks: [{
     key: '77n1t',
-    text: 'Lorem ipsum dolor sit amet, pro nisl sonet ad. ',
+    text: 'L🐡rem ipsum dolor sit amet, pro nisl sonet ad. ',
     type: 'unstyled',
     depth: 0,
     inlineStyleRanges: [
