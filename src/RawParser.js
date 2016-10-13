@@ -1,5 +1,5 @@
+import punycode from 'punycode';
 import ContentNode from './ContentNode';
-
   /**
    * creates nodes with entity keys and the endOffset
    */
@@ -62,6 +62,10 @@ function getRelevantIndexes(text, inlineRanges, entityRanges = []) {
   return uniqueRelevantIndexes.sort((aa, bb) => (aa - bb));
 }
 
+/**
+ * Slices the decoded ucs2 array and encodes the result back to a string representation
+ */
+const getString = (decoded, from, to) => punycode.ucs2.encode(decoded.slice(from, to));
 
 export default class RawParser {
 
@@ -91,12 +95,12 @@ export default class RawParser {
                        ? indexes[key + 1] - index
                        : 1;
       // add all the chars up to next relevantIndex
-      const text = this.text.substr(index, distance);
+      const text = getString(this.decodedText, index, index + distance);
       node.pushContent(text, characterStyles);
 
       // if thers no next index and thers more text left to push
       if (!indexes[key + 1] && index < end) {
-        node.pushContent(this.text.substring(index + 1, end), this.relevantStyles(end - 1));
+        node.pushContent(getString(this.decodedText, index + 1, end), this.relevantStyles(end - 1));
       }
     });
     return node;
@@ -108,7 +112,10 @@ export default class RawParser {
    * the idea is still mostly same as backdraft.js (https://github.com/evanc/backdraft-js)
    */
   parse({ text, inlineStyleRanges: ranges, entityRanges }) {
-    this.text = text;
+    // Unicode charactes actualy have length of more than 1
+    // punycode.ucs2.decode creates an array containing the numeric code point values
+    // of each Unicode symbol in the string (https://github.com/bestiejs/punycode.js/#punycodeucs2decodestring)
+    this.decodedText = punycode.ucs2.decode(text);
     this.ranges = ranges;
     this.iterator = 0;
     // get all the relevant indexes for whole block
