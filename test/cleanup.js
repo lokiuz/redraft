@@ -10,7 +10,6 @@ chai.should();
 const inline = {
   BOLD: (children) => `<strong>${children.join('')}</strong>`,
   ITALIC: (children) => `<em>${children.join('')}</em>`,
-  UND: (children) => `<em>${children.join('')}</em>`,
 };
 
 const atomicBlocks = {

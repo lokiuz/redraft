@@ -9,8 +9,7 @@ const should = chai.should();
 // render to HTML
 const inline = {
   BOLD: (children) => `<strong>${children.join('')}</strong>`,
-  ITALIC: (children) => `<em>${children.join('')}</em>`,
-  UND: (children) => `<em>${children.join('')}</em>`,
+  ITALIC: (children) => `<em>${children.join('')}</em>`
 };
 
 const blocks = {
@@ -61,7 +60,6 @@ const blocksWithKeys = {
 const inlineNoJoin = {
   BOLD: (children) => `<strong>${children}</strong>`,
   ITALIC: (children) => `<em>${children}</em>`,
-  UND: (children) => `<em>${children}</em>`,
 };
 
 const entitiesNoJoin = {
@@ -92,7 +90,7 @@ describe('redraft', () => {
   it('should render correctly', () => {
     const rendered = redraft(raws.raw, renderers);
     const joined = joinRecursively(rendered);
-    joined.should.equal('<p><strong>L🐡rem </strong><a href="http://zombo.com/" ><strong><em>ipsum</em></strong></a><strong><em> dolor</em></strong><em> sit amet,</em> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <em>ceteros invenire </em>tractatos his id. </blockquote><p><strong>Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</strong></p>'); // eslint-disable-line max-len
+    joined.should.equal('<p><strong>Lorem </strong><a href="http://zombo.com/" ><strong><em>ipsum</em></strong></a><strong><em> dolor</em></strong><em> sit amet,</em> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <em>ceteros invenire </em>tractatos his id. </blockquote><p><strong>Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</strong></p>'); // eslint-disable-line max-len
   });
   it('should render blocks with single char correctly', () => {
     const rendered = redraft(raws.raw2, renderers);
@@ -141,7 +139,7 @@ describe('redraft', () => {
   });
   it('should render correctly without join', () => {
     const rendered = redraft(raws.raw, renderersNoJoin, { joinOutput: true });
-    rendered.should.equal('<p><strong>L🐡rem </strong><a href="http://zombo.com/" ><strong><em>ipsum</em></strong></a><strong><em> dolor</em></strong><em> sit amet,</em> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <em>ceteros invenire </em>tractatos his id. </blockquote><p><strong>Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</strong></p>'); // eslint-disable-line max-len
+    rendered.should.equal('<p><strong>Lorem </strong><a href="http://zombo.com/" ><strong><em>ipsum</em></strong></a><strong><em> dolor</em></strong><em> sit amet,</em> pro nisl sonet ad. </p><blockquote>Eos affert numquam id, in est meis nobis. Legimus singulis suscipiantur eum in, <em>ceteros invenire </em>tractatos his id. </blockquote><p><strong>Facer facilis definiebas ea pro, mei malis libris latine an. Senserit moderatius vituperata vis in.</strong></p>'); // eslint-disable-line max-len
   });
   it('should render null for empty raw blocks array', () => {
     const rendered = redraft(raws.emptyRaw, renderers);
