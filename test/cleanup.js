@@ -98,4 +98,18 @@ describe('redraft with cleanup', () => {
     const joined = joinRecursively(rendered);
     joined.should.equal('<div key="1" style="width: 300px;" >A</div><p></p><div key="2" style="width: 100px;" >B</div><blockquote></blockquote><img key="3" src="img.png" alt="D" /><p> </p>'); // eslint-disable-line max-len
   });
+  it('should split groups properly with split enabled', () => {
+    const rendered = redraft(raws.rawWithEmptyBlocks3, renderers, {
+      cleanup: { types: 'all', after: 'all', split: true },
+    });
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<p>1</p><p>2</p>'); // eslint-disable-line max-len
+  });
+  it('should respect split set to false', () => {
+    const rendered = redraft(raws.rawWithEmptyBlocks3, renderers, {
+      cleanup: { types: 'all', after: 'all', split: false },
+    });
+    const joined = joinRecursively(rendered);
+    joined.should.equal('<p>12</p>'); // eslint-disable-line max-len
+  });
 });

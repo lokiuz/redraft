@@ -50,10 +50,11 @@ const renderers = {
    * Those callbacks will be called recursively to render a nested structure
    */
   inline: {
-    BOLD: (children) => <strong>{children}</strong>,
-    ITALIC: (children) => <em>{children}</em>,
-    UNDERLINE: (children) => <u>{children}</u>,
-    CODE: (children) => <span style={styles.code}>{children}</span>,
+    // The key passed here is just a simple index
+    BOLD: (children, { key }) => <strong key={key}>{children}</strong>,
+    ITALIC: (children, { key }) => <em key={key}>{children}</em>,
+    UNDERLINE: (children, { key }) => <u key={key}>{children}</u>,
+    CODE: (children, { key }) => <span key={key} style={styles.code}>{children}</span>,
   },
   /**
    * Blocks receive children and depth
@@ -75,7 +76,8 @@ const renderers = {
    * Entities receive children and the entity data
    */
   entities: {
-    LINK: (children, data) => <Link to={data.url}>{children}/>,
+    // key is the entity key value from raw
+    LINK: (children, data, { key }) => <Link key={key} to={data.url}>{children}/>,
   },
 }
 
@@ -140,6 +142,7 @@ Returns an rendered single block.
   - `types` - array of block types that are checked, or `'all'` (default: `['unstyled']`)
   - `except` - array of block types that are omitted during cleanup - passing this is same as setting types to `'all'` (default: `undefined`)
   - `trim` - boolean, should the block text be trimmed when checking if its empty (default: `false`)
+  - `split` - boolean, splits groups after cleanup, works best when cleanup is enabled for and after all types - more info in the example (default: `true`)
 - `joinOutput` - used when rendering to string, joins the output and the children of all the inline and entity renderers, it expects that all renderers return strings, you still have to join the at block level (default: `false`)
 
 ## Changelog

@@ -21,10 +21,10 @@ const styles = {
 };
 
 const inline = {
-  BOLD: children => <strong>{children}</strong>,
-  ITALIC: children => <em>{children}</em>,
-  UNDERLINE: children => <u>{children}</u>,
-  CODE: children => <span style={styles.code}>{children}</span>,
+  BOLD: (children, { key }) => <strong key={key}>{children}</strong>,
+  ITALIC: (children, { key }) => <em key={key}>{children}</em>,
+  UNDERLINE: (children, { key }) => <u key={key}>{children}</u>,
+  CODE: (children, { key }) => <span key={key} style={styles.code}>{children}</span>,
 };
 
 
@@ -45,6 +45,8 @@ const getAtomic = (children, _, { data, keys }) => data.map(
  * Note that children can be maped to render a list or do other cool stuff
  */
 const blocks = {
+  // Rendering blocks like this along with cleanup results in a single p tag for each paragraph
+  // adding an empty block closes current paragraph and starts a new one
   unstyled: (children, _, { keys }) => <p key={keys[0]}>{addBreaklines(children)}</p>,
   atomic: getAtomic,
   blockquote:
@@ -61,19 +63,27 @@ const blocks = {
 };
 
 const entities = {
-  LINK: (children, entity) => <a href={entity.url}>{children}</a>,
+  LINK: (children, entity, { key }) => <a key={key} href={entity.url}>{children}</a>,
 };
 
 
 const isEmptyRaw = raw => (!raw || !raw.blocks || (raw.blocks.length === 1 && raw.blocks[0].text === ''));
 
+const options = {
+  cleanup: {
+    after: 'all',
+    types: 'all',
+    split: true,
+  },
+};
+
 const Preview = ({ raw }) => {
   const isEmpty = isEmptyRaw(raw);
-
+  window.redraft = redraft;
   return (
     <div className="Preview">
       {isEmpty && <div className="Preview-empty">There's nothing to render...</div>}
-      {!isEmpty && redraft(raw, { inline, blocks, entities })}
+      {!isEmpty && redraft(raw, { inline, blocks, entities }, options)}
     </div>
   );
 };

@@ -558,3 +558,45 @@ export const rawWithEmoji3 = {
     ],
   }],
 };
+
+export const rawWithEmptyBlocks3 = {
+  entityMap: {},
+  blocks: [
+    {
+      key: 'u1',
+      type: 'unstyled',
+      text: '',
+      depth: 0,
+      data: {},
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: 'u2',
+      type: 'unstyled',
+      text: '1',
+      depth: 0,
+      data: {},
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: 'u3',
+      type: 'unstyled',
+      text: '',
+      depth: 0,
+      data: {},
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+    {
+      key: 'u4',
+      type: 'unstyled',
+      text: '2',
+      depth: 0,
+      data: {},
+      inlineStyleRanges: [],
+      entityRanges: [],
+    },
+  ],
+};
