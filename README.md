@@ -147,7 +147,7 @@ Returns an rendered single block.
 - `joinOutput` - used when rendering to string, joins the output and the children of all the inline and entity renderers, it expects that all renderers return strings, you still have to join the at block level (default: `false`)
 
 ## Changelog
-The changelog is avalible here [CHANGELOG](CHANGELOG.md)
+The changelog is available here [CHANGELOG](CHANGELOG.md)
 
 ## Credits
 - [backdraft-js](https://github.com/evanc/backdraft-js) - For providing a general method of parsing raw state
