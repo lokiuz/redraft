@@ -3,6 +3,7 @@
 - added proper surrogate pair handling for multibyte unicode characters #15
 - added split to cleanup options - it allows to separate groups with blocks that qualify for cleanup, see [example](http://lokiuz.github.io/redraft/)
 - added key for inline and entity renderers
+
 ## 0.6.0
 - modified block renderers api: keys are now wrapped in an object along with new data key containing block metadata
 - added joinOutput and cleanup options to the API
