@@ -1,6 +1,6 @@
 import RawParser from './RawParser';
 import warn from './warn';
-import checkCleanup from './checkClenup';
+import checkCleanup from './checkCleanup';
 
 const defaultOptions = {
   joinOutput: false,
