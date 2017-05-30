@@ -1,3 +1,4 @@
+import runes from 'runes';
 import ContentNode from './ContentNode';
 
 /**
@@ -128,7 +129,7 @@ export default class RawParser {
   parse({ text, inlineStyleRanges: ranges, entityRanges, decoratorRanges = [] }) {
     // Some unicode charactes actualy have length of more than 1
     // this creates an array of code points using es6 string iterator
-    this.textArray = Array.from(text);
+    this.textArray = runes(text);
     this.ranges = ranges;
     this.iterator = 0;
     // get all the relevant indexes for whole block

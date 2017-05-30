@@ -42,5 +42,8 @@
     "react-dom": "^15.4.2",
     "rimraf": "^2.5.2",
     "tlds": "^1.183.0"
+  },
+  "dependencies": {
+    "runes": "^0.4.0"
   }
 }
